@@ -1,0 +1,13 @@
+[package]
+name = "swain"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ahash = { version = "0.8.11", default-features = false, features = ["std", "runtime-rng"] }
+parking_lot = { version = "0.12.3", default-features = false }
+reqwest = { version = "0.12.7", default-features = false, features = ["gzip", "http2", "rustls-tls", "stream"] }
+serde = { version = "1.0.210", default-features = false, features = ["derive", "std"] }
+serde_json = { version = "1.0.128", default-features = false, features = ["std"] }
+thiserror = "1.0.64"
+tokio = { version = "1.40.0", default-features = false, features = ["sync"] }

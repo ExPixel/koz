@@ -2,6 +2,8 @@
 members = [
     "crates/ingest",
     "crates/koz",
+    "crates/koz-storage",
+    "crates/swain",
 ]
 
 resolver = "2"

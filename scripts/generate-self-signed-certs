@@ -1,0 +1,8 @@
+#!/bin/sh
+
+SCRIPT=$(readlink -f "$0")
+SCRIPTDIR=$(dirname "$SCRIPT")
+NGINXCONFDIR="$SCRIPTDIR/../config/dev/nginx.conf.d"
+
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "$NGINXCONFDIR/nginx-selfsigned.key" -out "$NGINXCONFDIR/nginx-selfsigned.crt"
+openssl dhparam -out "$NGINXCONFDIR/dhparam.pem" 4096

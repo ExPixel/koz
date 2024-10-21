@@ -1,0 +1,57 @@
+services:
+  koz:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    tty: true
+    environment:
+      - RUST_BACKTRACE=1
+    image: koz
+    expose:
+      - 8080
+    volumes:
+      - .:/app
+    depends_on:
+      - koz-postgres
+    links:
+      - koz-postgres
+    networks:
+      - koz
+    command: sh -c "/app/scripts/wait-for-exit.sh"
+  koz-nginx:
+    image: docker.io/nginx:1.27-alpine
+    ports:
+      - 8080:8080
+      - 8443:8443
+    volumes:
+      - ./config/dev/nginx.conf.d/default.conf:/etc/nginx/conf.d/default.conf
+      - ./config/dev/nginx.conf.d/self-signed.conf:/etc/nginx/snippets/self-signed.conf
+      - ./config/dev/nginx.conf.d/ssl-params.conf:/etc/nginx/snippets/ssl-params.conf
+      - ./config/dev/nginx.conf.d/nginx-selfsigned.crt:/etc/ssl/certs/nginx-selfsigned.crt
+      - ./config/dev/nginx.conf.d/nginx-selfsigned.key:/etc/ssl/private/nginx-selfsigned.key
+      - ./config/dev/nginx.conf.d/dhparam.pem:/etc/nginx/dhparam.pem
+    links:
+      - koz
+    depends_on:
+      - koz
+    networks:
+      - koz
+  koz-postgres:
+    image: docker.io/postgres:16-alpine
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: root
+    volumes:
+      - ./config/dev/pgsql.conf.d/schema:/docker-entrypoint-initdb.d
+      - koz-postgres-data:/var/lib/postgresql/data
+    networks:
+      - koz
+
+networks:
+  koz:
+    driver: bridge
+volumes:
+  koz-postgres-data:

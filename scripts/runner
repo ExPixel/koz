@@ -1,0 +1,53 @@
+#!/bin/bash
+
+SCRIPT=$(readlink -f "$0")
+SCRIPTDIR=$(dirname "$SCRIPT")
+OLDCWD=$(pwd)
+PROJECTDIR=$SCRIPTDIR/..
+
+
+if command -v podman &> /dev/null; then
+    CONTAINERBIN=podman
+elif command -v docker &> /dev/null; then
+    CONTAINERBIN=docker
+else
+    echo "error: could not find docker or podman executable"
+fi
+
+container_exec() {
+    case "$CONTAINERBIN" in
+        podman)
+            podman-compose exec -it koz "$@"
+            ;;
+        docker)
+            docker compose exec koz "$@"
+            ;;
+        *)
+            echo "error: unknown container binary $CONTAINERBIN"
+            exit 1
+            ;;
+    esac
+}
+
+ep_relative_path() {
+    local base_path=$(realpath "$1")
+    local user_path="$2"
+    local result="$user_path"
+
+    if command -v python3 &> /dev/null; then
+        python3 -c "import os.path; print(os.path.relpath('$user_path', '$base_path'))"
+    elif command -v perl &> /dev/null; then
+        perl -le 'use File::Spec; print File::Spec->abs2rel(@ARGV)' $user_path $base_path
+    else
+        realpath --relative-to="$base_path" "$user_path"
+    fi
+}
+
+
+RELBIN=$(ep_relative_path "$PROJECTDIR" "$1")
+
+cd "$PROJECTDIR"
+container_exec "$RELBIN" "${@:2}"
+SAVEDSTATUS="$?"
+cd "$OLDCWD"
+exit "$SAVEDSTATUS"
