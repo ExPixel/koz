@@ -1,0 +1,169 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ScheduledTask {
+  name        String    @id @db.VarChar(255)
+  schedule    String
+  enabled     Boolean   @default(true)
+  last_run_at DateTime? @db.Timestamptz(3)
+  next_run_at DateTime? @db.Timestamptz(3)
+
+  @@map("scheduled_task")
+}
+
+model RiotAccount {
+  id        BigInt @id @default(autoincrement())
+  puuid     String @unique @db.VarChar(255)
+  game_name String @db.VarChar(255)
+  tag_line  String @db.VarChar(255)
+
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @default(now()) @db.Timestamptz(3)
+
+  history RiotAccountHistory[]
+
+  @@index([game_name, tag_line], map: "game_name_tag_line_idx")
+  @@map("riot_account")
+}
+
+model RiotAccountHistory {
+  riot_account_id BigInt
+  riot_account    RiotAccount @relation(fields: [riot_account_id], references: [id])
+
+  game_name String
+  tag_line  String
+
+  updated_at DateTime @db.Timestamptz(3)
+
+  @@id([riot_account_id, updated_at])
+  @@map("riot_account_history")
+}
+
+model LolSummoner {
+  id          BigInt    @id @default(autoincrement())
+  account_id  String
+  summoner_id String
+  region      LolRegion
+
+  profile_icon_id Int
+  revision_date   DateTime @db.Timestamptz(3)
+  summoner_level  Int
+
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @default(now()) @db.Timestamptz(3)
+
+  rank            LolSummonerRank[]
+  rank_history    LolSummonerRankHistory[]
+  profile_history LolSummonerProfileHistory[]
+
+  @@unique([region, summoner_id])
+  @@map("lol_summoner")
+}
+
+model LolSummonerProfileHistory {
+  lol_summoner_id BigInt
+  summoner        LolSummoner @relation(fields: [lol_summoner_id], references: [id])
+
+  profile_icon_id Int?
+  revision_date   DateTime? @db.Timestamptz(3)
+  summoner_level  Int
+
+  updated_at DateTime @db.Timestamptz(3)
+
+  @@id([lol_summoner_id, updated_at])
+  @@map("lol_summoner_profile_history")
+}
+
+model LolSummonerRank {
+  lol_summoner_id BigInt
+  summoner        LolSummoner @relation(fields: [lol_summoner_id], references: [id])
+
+  queue_type    LolRankedQueue
+  tier          LolTier
+  division      Int
+  league_points Int
+  wins          Int
+  losses        Int
+
+  mini_series_wins     Int?
+  mini_series_losses   Int?
+  mini_series_target   Int?
+  mini_series_progress String?
+
+  updated_at DateTime @db.Timestamptz(3)
+
+  @@id([lol_summoner_id, queue_type])
+  @@map("lol_summoner_rank")
+}
+
+model LolSummonerRankHistory {
+  lol_summoner_id BigInt
+  summoner        LolSummoner @relation(fields: [lol_summoner_id], references: [id])
+
+  queue_type    LolRankedQueue
+  tier          LolTier
+  division      Int
+  league_points Int
+  wins          Int
+  losses        Int
+
+  mini_series_wins     Int?
+  mini_series_losses   Int?
+  mini_series_target   Int?
+  mini_series_progress String?
+
+  updated_at DateTime @db.Timestamptz(3)
+
+  @@id([lol_summoner_id, queue_type, updated_at])
+  @@map("lol_summoner_rank_history")
+}
+
+enum LolTier {
+  IRON
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+  EMERALD
+  DIAMOND
+  MASTER
+  GRANDMASTER
+  CHALLENGER
+
+  @@map("lol_tier")
+}
+
+enum LolRankedQueue {
+  SOLO
+  FLEX
+  TWISTED_TREELINE
+
+  @@map("lol_ranked_queue")
+}
+
+enum LolRegion {
+  BR
+  EUN
+  EUW
+  JP
+  KR
+  LAN
+  LAS
+  NA
+  OC
+  PH
+  RU
+  SG
+  TH
+  TR
+  TW
+  VN
+
+  @@map("lol_region")
+}

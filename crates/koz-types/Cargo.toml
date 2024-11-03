@@ -1,0 +1,9 @@
+[package]
+name = "koz-types"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+derive_more = { version = "1.0.0", default-features = false, features = ["std", "from", "into", "deref", "deref_mut", "display", "constructor"] }
+sqlx = { version = "0.8.2", default-features = false }
+thiserror = "1.0.64"

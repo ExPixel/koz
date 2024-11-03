@@ -4,4 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-sqlx = { version = "0.8.2", default-features = false, features = ["json", "postgres", "macros", "chrono"] }
+anyhow = { version = "1", default-features = false, features = ["std"] }
+chrono = { version = "0.4.38", default-features = false, features = ["std", "now"] }
+derive_more = { version = "1.0.0", default-features = false, features = ["display", "from", "into"] }
+koz-types = { version = "0.1.0", path = "../koz-types" }
+sqlx = { version = "0.8.2", default-features = false, features = ["json", "postgres", "macros", "chrono", "runtime-tokio"] }
+thiserror = { version = "1.0.65", default-features = false }

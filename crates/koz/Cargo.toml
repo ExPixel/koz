@@ -5,3 +5,11 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1"
+dotenvy = { version = "0.15.7", default-features = false }
+koz-ingest = { version = "0.1.0", path = "../koz-ingest" }
+koz-storage = { version = "0.1.0", path = "../koz-storage" }
+koz-web = { version = "0.1.0", path = "../koz-web" }
+swain = { version = "0.1.0", path = "../swain" }
+tokio = { version = "1.40.0", default-features = false, features = ["rt-multi-thread"] }
+tracing = { version = "0.1.40", default-features = false, features = ["std", "attributes"] }
+tracing-subscriber = { version = "0.3.18", default-features = false, features = ["ansi", "fmt", "smallvec", "std", "tracing-log", "env-filter"] }

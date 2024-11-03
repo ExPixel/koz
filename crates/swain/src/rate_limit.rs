@@ -135,7 +135,11 @@ struct RateLimitBuckets {
 }
 
 impl RateLimitBuckets {
-    async fn acquire(&mut self) {}
+    async fn acquire(&mut self) {
+        if let Err(wait_until) = self.check() {
+            tokio::time::sleep_until(wait_until.into()).await;
+        }
+    }
 }
 
 impl RateLimitBuckets {

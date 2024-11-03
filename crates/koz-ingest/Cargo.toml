@@ -1,0 +1,17 @@
+[package]
+name = "koz-ingest"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ahash = { version = "0.8.11", default-features = false, features = ["std", "runtime-rng"] }
+anyhow = "1"
+chrono = { version = "0.4.38", default-features = false, features = ["std", "now"] }
+futures = { version = "0.3.31", default-features = false, features = ["std"] }
+humantime = "2.1.0"
+koz-storage = { version = "0.1.0", path = "../koz-storage" }
+koz-types = { version = "0.1.0", path = "../koz-types" }
+parking_lot = { version = "0.12.3", default-features = false }
+swain = { version = "0.1.0", path = "../swain" }
+tokio = { version = "1.41.0", default-features = false, features = ["rt", "time"] }
+tracing = { version = "0.1.40", default-features = false, features = ["std", "attributes"] }

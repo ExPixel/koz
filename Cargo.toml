@@ -1,8 +1,10 @@
 [workspace]
 members = [
-    "crates/ingest",
     "crates/koz",
+    "crates/koz-ingest",
     "crates/koz-storage",
+    "crates/koz-types",
+    "crates/koz-web",
     "crates/swain",
 ]
 

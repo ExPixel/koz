@@ -2,7 +2,7 @@ use std::{future::Future, sync::Arc};
 
 use self::error::Result;
 use client::RiotHttpClient;
-use error::{ApiError, Error};
+use error::Error;
 use reqwest::Client;
 
 pub mod client;
@@ -11,6 +11,7 @@ pub mod error;
 pub mod rate_limit;
 pub mod request;
 
+#[derive(Clone)]
 pub struct Swain {
     client: Arc<RiotHttpClient>,
 }
